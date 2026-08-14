@@ -111,6 +111,36 @@
         color: #1d4ed8;
         border-radius: 12px;
       }
+      .code {
+        font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
+        background: #f8fafc;
+        border: 1px solid var(--line);
+        padding: 12px 14px;
+        border-radius: 12px;
+        overflow-x: auto;
+        color: #0f172a;
+        margin: 12px 0 0;
+      }
+      .list {
+        margin: 10px 0 0 18px;
+        color: var(--muted);
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        overflow: hidden;
+        border-radius: 14px;
+      }
+      .table th, .table td {
+        border: 1px solid var(--line);
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: top;
+      }
+      .table th {
+        background: #f8fafc;
+      }
       footer {
         margin-top: 44px;
         color: var(--muted);
@@ -129,7 +159,7 @@
         </p>
         <div class="actions">
           <a class="btn primary" href="#install">怎么安装</a>
-          <a class="btn" href="#repo">仓库链接</a>
+          <a class="btn" href="#readme">README 同步版</a>
         </div>
       </section>
 
@@ -157,6 +187,75 @@
           <p>
             版本说明、安装命令和使用步骤见公开 release 仓库 README。
           </p>
+        </div>
+      </section>
+
+      <section class="section" id="readme">
+        <h3>README 同步版</h3>
+        <div class="card">
+          <p><strong>前提条件</strong></p>
+          <ul class="list">
+            <li>Node.js 22+。</li>
+            <li>bun（推荐）或 npm。</li>
+          </ul>
+
+          <p style="margin-top: 18px;"><strong>一键安装 / 更新</strong></p>
+          <div class="code">curl -fsSL https://raw.githubusercontent.com/crossborder-ai/CrossPilot-releases/main/install.sh | bash</div>
+          <p class="list">
+            同一条命令既用于首次安装，也用于后续更新。脚本会下载最新构建包、安装运行时依赖、注册 `crosspilot` 命令并拉起服务。
+          </p>
+
+          <p style="margin-top: 18px;"><strong>日常启动</strong></p>
+          <div class="code">crosspilot</div>
+          <p class="list">
+            安装后在任意终端运行这一行即可；脚本会自动检查服务是否已运行，必要时启动并打开浏览器。
+          </p>
+
+          <p style="margin-top: 18px;"><strong>关闭</strong></p>
+          <p class="list">
+            关闭浏览器标签页后，服务会在约 30 秒无心跳后自动退出，不需要常驻终端。
+          </p>
+
+          <p style="margin-top: 18px;"><strong>领星配置</strong></p>
+          <ol class="list">
+            <li>先启动 CrossPilot，再打开本地页面。</li>
+            <li>进入设置页里的 LingXing / 领星配置区。</li>
+            <li>按页面提示填写 MCP URL 和 Key，并保存。</li>
+            <li>做一次连接测试，成功后再回到聊天页使用。</li>
+          </ol>
+
+          <p style="margin-top: 18px;"><strong>环境变量</strong></p>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>变量</th>
+                <th>说明</th>
+                <th>默认值</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>CROSSPILOT_INSTALL_DIR</code></td>
+                <td>安装目录</td>
+                <td><code>~/CrossPilot-app</code></td>
+              </tr>
+              <tr>
+                <td><code>CROSSPILOT_DATA_DIR</code></td>
+                <td>数据目录</td>
+                <td><code>~/.crosspilot</code></td>
+              </tr>
+              <tr>
+                <td><code>CROSSPILOT_PORT</code></td>
+                <td>监听端口</td>
+                <td><code>3456</code></td>
+              </tr>
+              <tr>
+                <td><code>CROSSPILOT_MIRROR</code></td>
+                <td>是否强制使用 npmmirror 镜像</td>
+                <td>自动探测</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
