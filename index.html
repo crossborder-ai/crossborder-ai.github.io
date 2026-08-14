@@ -194,15 +194,39 @@
         <h3>README 同步版</h3>
         <div class="card">
           <p><strong>前提条件</strong></p>
-          <ul class="list">
-            <li>Node.js 22+。</li>
-            <li>bun（推荐）或 npm。</li>
-          </ul>
+          <p class="list">
+            CrossPilot 需要本机已有 Node.js 22+。当前安装包已内置生产依赖，正常安装不需要现场安装 npm 依赖；建议同时安装 bun 作为兜底。
+          </p>
+          <p style="margin-top: 14px;"><strong>先检查本机是否已满足</strong></p>
+          <div class="code">node -v
+bun -v</div>
+          <p class="list">
+            如果 `node -v` 显示 `v22.x` 或更高，可以直接运行下面的 CrossPilot 一键安装命令。
+          </p>
+
+          <p style="margin-top: 18px;"><strong>macOS 已安装 Homebrew</strong></p>
+          <div class="code">brew install node@22 bun
+brew link --overwrite --force node@22
+node -v
+bun -v</div>
+
+          <p style="margin-top: 18px;"><strong>没有 Homebrew</strong></p>
+          <div class="code">curl -fsSL https://fnm.vercel.app/install | bash
+source ~/.zshrc 2&gt;/dev/null || source ~/.bashrc 2&gt;/dev/null || true
+fnm install 22
+fnm use 22
+curl -fsSL https://bun.sh/install | bash
+source ~/.zshrc 2&gt;/dev/null || source ~/.bashrc 2&gt;/dev/null || true
+node -v
+bun -v</div>
+          <p class="list">
+            如果安装后当前终端仍提示 `node` 或 `bun` 找不到，关闭终端重新打开后再执行检查命令。
+          </p>
 
           <p style="margin-top: 18px;"><strong>一键安装 / 更新</strong></p>
           <div class="code">curl -fsSL https://raw.githubusercontent.com/crossborder-ai/CrossPilot-releases/main/install.sh | bash</div>
           <p class="list">
-            同一条命令既用于首次安装，也用于后续更新。脚本会下载最新构建包、安装运行时依赖、注册 `crosspilot` 命令并拉起服务。
+            同一条命令既用于首次安装，也用于后续更新。脚本会下载最新构建包、使用包内置运行时依赖、注册 `crosspilot` 命令并拉起服务。本地 Node 架构不兼容时才会尝试修复或安装依赖。
           </p>
 
           <p style="margin-top: 18px;"><strong>日常启动</strong></p>
