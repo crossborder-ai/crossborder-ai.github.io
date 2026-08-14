@@ -124,12 +124,42 @@
         <div class="eyebrow">CrossPilot</div>
         <h1>面向跨境业务的可复用 AI 工具主站</h1>
         <p class="lead">
-          这里展示 CrossPilot 的产品介绍、作品案例、试用入口和更新公告。
+          这里展示 CrossPilot 的产品介绍、安装方式、启动/关闭说明和仓库链接。
           主站只负责对外展示，发布包与分发链路保持独立。
         </p>
         <div class="actions">
-          <a class="btn primary" href="#works">看作品</a>
-          <a class="btn" href="#try">试用入口</a>
+          <a class="btn primary" href="#install">怎么安装</a>
+          <a class="btn" href="#repo">仓库链接</a>
+        </div>
+      </section>
+
+      <section class="grid" id="install">
+        <article class="card">
+          <h2>安装</h2>
+          <p>按 README 的安装命令执行即可。安装时会自动配置国内镜像，并把运行所需内容装到本机。</p>
+        </article>
+        <article class="card">
+          <h2>启动</h2>
+          <p>安装后直接在终端输入 <code>crosspilot</code>。它会自动拉起本地服务并打开浏览器。</p>
+        </article>
+        <article class="card">
+          <h2>关闭</h2>
+          <p>关闭浏览器标签页后，服务会在约 30 秒后自动停止；也可以按 README 里的方式手动退出。</p>
+        </article>
+      </section>
+
+      <section class="section" id="repo">
+        <h3>仓库链接</h3>
+        <div class="card">
+          <p style="margin-bottom: 12px;">
+            源码仓库：<a href="https://github.com/crossborder-ai/CrossPilot">github.com/crossborder-ai/CrossPilot</a>
+          </p>
+          <p style="margin-bottom: 12px;">
+            安装包仓库：<a href="https://github.com/crossborder-ai/CrossPilot-releases">github.com/crossborder-ai/CrossPilot-releases</a>
+          </p>
+          <p>
+            版本说明和安装步骤见 release 仓库 README。
+          </p>
         </div>
       </section>
 
@@ -168,7 +198,7 @@
       </section>
 
       <div class="note">
-        说明：本页是 CrossPilot 主站，不包含发布包本身。
+        说明：本页是 CrossPilot 主站，不包含发布包本身。安装、启动、关闭以 release 仓库 README 为准。
       </div>
 
       <footer>© CrossPilot</footer>
