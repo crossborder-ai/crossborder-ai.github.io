@@ -267,34 +267,6 @@
         border-radius: 24px;
         padding: 22px;
       }
-      .contact-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 14px;
-        margin-top: 14px;
-      }
-      .contact-item {
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        padding: 16px;
-        background: #fff;
-      }
-      .contact-item h3 {
-        margin: 0 0 8px;
-        font-size: 16px;
-      }
-      .contact-item p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 14px;
-      }
-      .contact-link {
-        display: inline-flex;
-        margin-top: 12px;
-        color: var(--accent);
-        text-decoration: none;
-        font-weight: 600;
-      }
       .table {
         width: 100%;
         border-collapse: collapse;
@@ -580,35 +552,14 @@ bun -v</div>
         <div class="section-head">
           <div>
             <h2>联系与反馈</h2>
-            <p>先把入口做出来，后续再补真实的微信、飞书群或邮箱。</p>
+            <p>现在先留一个最简单的反馈入口，其他联系渠道后补。</p>
           </div>
         </div>
         <div class="panel">
-          <p style="margin-top:0; margin-bottom: 0;">
-            如果你想试用、提需求或报 bug，先从下面这几个入口进。真实联系方式补齐后，这里会继续保留为统一入口。
+          <p style="margin-top:0;">
+            想试用、提 bug 或留建议，先到 GitHub Issues。
           </p>
-          <div class="contact-grid">
-            <div class="contact-item">
-              <h3>试用反馈</h3>
-              <p>安装后遇到问题、想提体验建议，优先走这里。</p>
-              <a class="contact-link" href="https://github.com/crossborder-ai/CrossPilot-releases/issues">去 GitHub Issues</a>
-            </div>
-            <div class="contact-item">
-              <h3>版本说明</h3>
-              <p>查看发布包、安装脚本和 README 的最新说明。</p>
-              <a class="contact-link" href="https://github.com/crossborder-ai/CrossPilot-releases">打开 Releases 仓库</a>
-            </div>
-            <div class="contact-item">
-              <h3>商务联系</h3>
-              <p>后续会补微信 / 邮箱 / 飞书群，先预留这个位置。</p>
-              <a class="contact-link" href="#top">暂用首页顶部</a>
-            </div>
-          </div>
-          <p class="fineprint">
-            公开安装包与版本说明仍以
-            <a href="https://github.com/crossborder-ai/CrossPilot-releases">CrossPilot-releases</a>
-            为准。
-          </p>
+          <a class="btn primary" href="https://github.com/crossborder-ai/CrossPilot-releases/issues">去 GitHub Issues</a>
         </div>
       </section>
 
