@@ -267,6 +267,24 @@
         border-radius: 24px;
         padding: 22px;
       }
+      .contact-qr {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .contact-qr img {
+        width: 180px;
+        max-width: 100%;
+        height: auto;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+      .contact-qr p {
+        margin: 0;
+        color: var(--muted);
+      }
       .table {
         width: 100%;
         border-collapse: collapse;
@@ -552,11 +570,14 @@ bun -v</div>
         <div class="section-head">
           <div>
             <h2>联系方式</h2>
-            <p>先放一个最简单的联系入口。</p>
+            <p>直接扫码联系我。</p>
           </div>
         </div>
         <div class="panel">
-          <a class="btn primary" href="https://github.com/crossborder-ai/CrossPilot-releases/issues">GitHub Issues</a>
+          <div class="contact-qr">
+            <img src="wechat-qr.png" alt="微信二维码" />
+            <p>微信扫码即可联系。</p>
+          </div>
         </div>
       </section>
 
