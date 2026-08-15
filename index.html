@@ -3,60 +3,112 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Force a fresh GitHub Pages build after source/path config changes. -->
-    <title>CrossPilot</title>
+    <title>CrossPilot｜跨境运营 AI 助手</title>
     <meta
       name="description"
-      content="CrossPilot 主站：产品介绍、作品展示、试用入口与更新公告。"
+      content="CrossPilot 是一个跑在你电脑上的跨境电商 AI 运营助手：自然语言查库存、拿补货建议，数据不出本机。"
     />
     <style>
       :root {
         color-scheme: light;
-        --bg: #f7f8fb;
+        --bg: #f5f7fb;
         --card: #ffffff;
         --text: #101828;
         --muted: #667085;
         --line: #e4e7ec;
         --accent: #2563eb;
+        --accent-2: #7c3aed;
+        --soft: #eff6ff;
+        --success: #067647;
       }
       * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
       body {
         margin: 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: var(--bg);
+        background:
+          radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 30%),
+          radial-gradient(circle at top right, rgba(124, 58, 237, 0.08), transparent 26%),
+          var(--bg);
         color: var(--text);
-        line-height: 1.5;
+        line-height: 1.6;
       }
+      a { color: inherit; }
       .wrap {
-        max-width: 1080px;
+        max-width: 1120px;
         margin: 0 auto;
-        padding: 48px 20px 72px;
+        padding: 28px 20px 72px;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .brand-mark {
+        width: 28px;
+        height: 28px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      }
+      .nav {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .nav a {
+        text-decoration: none;
       }
       .hero {
-        padding: 28px 0 36px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+        gap: 28px;
+        align-items: center;
+        padding: 36px 0 18px;
       }
       .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         color: var(--accent);
         font-weight: 700;
-        letter-spacing: .04em;
-        text-transform: uppercase;
-        font-size: 12px;
+        font-size: 13px;
+        letter-spacing: .02em;
+      }
+      .eyebrow::before {
+        content: "";
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--accent);
       }
       h1 {
-        margin: 12px 0 12px;
-        font-size: clamp(36px, 6vw, 64px);
-        line-height: 1.05;
+        margin: 12px 0 14px;
+        font-size: clamp(38px, 6vw, 68px);
+        line-height: 1.02;
+        letter-spacing: -0.03em;
       }
       .lead {
-        max-width: 720px;
-        font-size: 18px;
+        max-width: 700px;
+        margin: 0 0 20px;
         color: var(--muted);
-        margin: 0 0 24px;
+        font-size: 18px;
       }
       .actions {
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
+        margin-bottom: 18px;
       }
       .btn {
         display: inline-flex;
@@ -71,59 +123,149 @@
         background: var(--card);
       }
       .btn.primary {
-        background: var(--accent);
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
         color: #fff;
-        border-color: var(--accent);
+        border-color: transparent;
+      }
+      .chips {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(228, 231, 236, 0.9);
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .preview {
+        background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.98));
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        padding: 18px;
+        box-shadow: 0 24px 60px rgba(16, 24, 40, 0.08);
+      }
+      .preview .label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 12px;
+      }
+      .preview .label::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--success);
+      }
+      .bubble {
+        border-radius: 18px;
+        padding: 14px 16px;
+        margin-top: 12px;
+      }
+      .bubble.user {
+        background: #f8fafc;
+        border: 1px solid var(--line);
+      }
+      .bubble.ai {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+      }
+      .bubble strong { display: block; margin-bottom: 4px; }
+      .stack {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-top: 20px;
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 20px;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+      }
+      .card h2, .card h3 {
+        margin: 0 0 10px;
+        line-height: 1.25;
+      }
+      .card p { margin: 0; color: var(--muted); }
+      .section {
+        margin-top: 44px;
+      }
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 16px;
+      }
+      .section-head h2 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .section-head p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 720px;
       }
       .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         gap: 16px;
-        margin-top: 28px;
       }
-      .card {
-        background: var(--card);
+      .card .question {
+        margin-top: 14px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: #f8fafc;
+        color: #344054;
         border: 1px solid var(--line);
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+        font-size: 14px;
       }
-      .card h2 {
-        font-size: 18px;
-        margin: 0 0 10px;
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
       }
-      .card p {
-        margin: 0;
-        color: var(--muted);
-      }
-      .section {
-        margin-top: 42px;
-      }
-      .section h3 {
-        margin: 0 0 14px;
-        font-size: 20px;
-      }
-      .note {
-        margin-top: 26px;
-        padding: 16px 18px;
-        border-left: 4px solid var(--accent);
-        background: #eff6ff;
-        color: #1d4ed8;
-        border-radius: 12px;
+      .step-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        background: var(--soft);
+        color: var(--accent);
+        font-weight: 700;
+        margin-bottom: 12px;
       }
       .code {
-        font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
-        background: #f8fafc;
+        margin-top: 12px;
+        padding: 14px 16px;
+        border-radius: 16px;
         border: 1px solid var(--line);
-        padding: 12px 14px;
-        border-radius: 12px;
+        background: #0f172a;
+        color: #e2e8f0;
         overflow-x: auto;
-        color: #0f172a;
-        margin: 12px 0 0;
+        font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
+        font-size: 13px;
+        line-height: 1.5;
       }
-      .list {
-        margin: 10px 0 0 18px;
+      .fineprint {
+        margin-top: 10px;
         color: var(--muted);
+        font-size: 14px;
+      }
+      .panel {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 22px;
       }
       .table {
         width: 100%;
@@ -133,195 +275,328 @@
         border-radius: 14px;
       }
       .table th, .table td {
-        border: 1px solid var(--line);
-        padding: 10px 12px;
+        border-top: 1px solid var(--line);
+        padding: 11px 12px;
         text-align: left;
         vertical-align: top;
       }
       .table th {
         background: #f8fafc;
+        border-top: 0;
+      }
+      .faq {
+        display: grid;
+        gap: 12px;
+      }
+      details {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 16px 18px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 600;
       }
       footer {
         margin-top: 44px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
         color: var(--muted);
         font-size: 14px;
+      }
+      .footer-links {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      .footer-links a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      @media (max-width: 860px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .topbar {
+          align-items: start;
+          flex-direction: column;
+        }
+        .section-head {
+          align-items: start;
+          flex-direction: column;
+        }
       }
     </style>
   </head>
   <body>
     <main class="wrap">
-      <section class="hero">
-        <div class="eyebrow">CrossPilot</div>
-        <h1>面向跨境业务的可复用 AI 工具主站</h1>
-        <p class="lead">
-          这里展示 CrossPilot 的产品介绍、安装方式、启动/关闭说明和仓库链接。
-          主站只负责对外展示，发布包与分发链路保持独立。
-        </p>
-        <div class="actions">
-          <a class="btn primary" href="#install">怎么安装</a>
-          <a class="btn" href="#readme">README 同步版</a>
+      <header class="topbar">
+        <a class="brand" href="#top">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>CrossPilot</span>
+        </a>
+        <nav class="nav" aria-label="页面导航">
+          <a href="#what">产品</a>
+          <a href="#who">适合谁</a>
+          <a href="#how">怎么用</a>
+          <a href="#security">安全</a>
+          <a href="#updates">更新</a>
+          <a href="#contact">联系</a>
+        </nav>
+      </header>
+
+      <section class="hero" id="top">
+        <div>
+          <div class="eyebrow">CrossPilot｜跨境运营 AI 助手</div>
+          <h1>对着电脑说话，库存和补货建议就来了。</h1>
+          <p class="lead">
+            CrossPilot 是一个跑在你电脑上的跨境电商 AI 助手。
+            你可以直接问它库存、断货风险和补货建议；数据留在本机，不用把经营资料交给第三方服务器。
+          </p>
+          <div class="actions">
+            <a class="btn primary" href="#how">看安装脚本</a>
+            <a class="btn" href="#what">先看能做什么</a>
+          </div>
+          <div class="chips" aria-label="核心卖点">
+            <span class="chip">本地运行</span>
+            <span class="chip">自然语言问答</span>
+            <span class="chip">领星数据接入</span>
+            <span class="chip">补货建议</span>
+          </div>
+        </div>
+
+        <div class="preview" aria-label="产品对话示例">
+          <div class="label">本地对话示例</div>
+          <div class="bubble user">
+            <strong>你问</strong>
+            哪些 SKU 这周有断货风险？按最近销量给我补货建议。
+          </div>
+          <div class="bubble ai">
+            <strong>CrossPilot 回答</strong>
+            我先查了库存和近 30 天销量。A12、B07、C19 风险最高，
+            建议优先补 A12 180 件、B07 120 件、C19 90 件。
+            需要的话，我可以继续按仓库和供应周期再拆一版。
+          </div>
         </div>
       </section>
 
-      <section class="grid" id="install">
-        <article class="card">
-          <h2>安装</h2>
-          <p>按 README 的安装命令执行即可。安装时会自动配置国内镜像，并把运行所需内容装到本机。</p>
-        </article>
-        <article class="card">
-          <h2>启动</h2>
-          <p>安装后直接在终端输入 <code>crosspilot</code>。它会自动拉起本地服务并打开浏览器。</p>
-        </article>
-        <article class="card">
-          <h2>关闭</h2>
-          <p>关闭浏览器标签页后，服务会在约 30 秒后自动停止；也可以按 README 里的方式手动退出。</p>
-        </article>
-      </section>
-
-      <section class="section" id="repo">
-        <h3>仓库链接</h3>
-        <div class="card">
-          <p style="margin-bottom: 12px;">
-            安装包仓库：<a href="https://github.com/crossborder-ai/CrossPilot-releases">github.com/crossborder-ai/CrossPilot-releases</a>
-          </p>
-          <p>
-            版本说明、安装命令和使用步骤见公开 release 仓库 README。
-          </p>
+      <section class="section" id="what">
+        <div class="section-head">
+          <div>
+            <h2>它是什么</h2>
+            <p>先回答三个问题：这是什么、给谁用、能解决什么问题。</p>
+          </div>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <h3>给跨境卖家和运营用</h3>
+            <p>适合每天要看库存、算补货、追进度的人，不用先学一堆菜单路径。</p>
+          </article>
+          <article class="card">
+            <h3>把重复查询变成一句话</h3>
+            <p>你直接问问题，它替你查数据、整理结果、给出建议。</p>
+          </article>
+          <article class="card">
+            <h3>对决策负责，不只吐表格</h3>
+            <p>不是单纯返回数字，而是给出“该补多少、先补谁、为什么”的建议。</p>
+          </article>
         </div>
       </section>
 
-      <section class="section" id="readme">
-        <h3>README 同步版</h3>
-        <div class="card">
-          <p><strong>前提条件</strong></p>
-          <p class="list">
-            CrossPilot 需要本机已有 Node.js 22+。当前安装包已内置生产依赖，正常安装不需要现场安装 npm 依赖；建议同时安装 bun 作为兜底。
+      <section class="section" id="who">
+        <div class="section-head">
+          <div>
+            <h2>它适合谁</h2>
+            <p>把技术词放后面，先说清楚用户能不能直接用。</p>
+          </div>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <h3>核心用户</h3>
+            <p>亚马逊卖家、运营、库存管理人员。主要诉求是少翻表、少做手工判断。</p>
+          </article>
+          <article class="card">
+            <h3>进阶用户</h3>
+            <p>懂技术的独立开发者或服务商，可以看领星接入、工作流和本地运行方式。</p>
+          </article>
+          <article class="card">
+            <h3>不适合的场景</h3>
+            <p>如果你想要的是纯云端 SaaS、而且不接受本地安装，那这版不是最合适的入口。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="section-head">
+          <div>
+            <h2>它能做什么</h2>
+            <p>每个功能都配一个问句示例，减少理解成本。</p>
+          </div>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <h3>库存分析</h3>
+            <p>查库存、看断货风险、看趋势变化。</p>
+            <div class="question">例如：哪些 SKU 快断货了？</div>
+          </article>
+          <article class="card">
+            <h3>补货建议</h3>
+            <p>基于库存和销量，给出补货数量建议。</p>
+            <div class="question">例如：按最近 90 天销量，这三个产品建议补多少？</div>
+          </article>
+          <article class="card">
+            <h3>后续扩展</h3>
+            <p>利润分析、广告、选品等能力会继续补，但页面会明确标注 Roadmap。</p>
+            <div class="question">例如：这批产品的利润结构能不能一起看？</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="how">
+        <div class="section-head">
+          <div>
+            <h2>怎么用</h2>
+            <p>把最关键的安装和启动放这里，首页不再像 README。</p>
+          </div>
+        </div>
+        <div class="steps">
+          <article class="card">
+            <div class="step-num">1</div>
+            <h3>安装</h3>
+            <p>先准备好 Node.js 22+ 和 bun，然后运行安装脚本。</p>
+            <div class="code">curl -fsSL https://raw.githubusercontent.com/crossborder-ai/CrossPilot-releases/main/install.sh | bash</div>
+            <p class="fineprint">脚本会自动处理镜像、下载最新构建包并注册 `crosspilot` 命令。</p>
+          </article>
+          <article class="card">
+            <div class="step-num">2</div>
+            <h3>启动</h3>
+            <p>安装完成后，在任意终端输入 <code>crosspilot</code> 即可。</p>
+            <div class="code">crosspilot</div>
+            <p class="fineprint">会自动拉起本地服务并打开浏览器，不需要切到安装目录。</p>
+          </article>
+          <article class="card">
+            <div class="step-num">3</div>
+            <h3>关闭</h3>
+            <p>关闭浏览器标签页后，服务会在约 30 秒内自动退出。</p>
+            <p class="fineprint">不需要长期挂着终端；需要重新使用时，再输入一次 <code>crosspilot</code>。</p>
+          </article>
+        </div>
+
+        <div class="panel" style="margin-top: 16px;">
+          <h3 style="margin-top:0;">高级说明</h3>
+          <p class="fineprint" style="margin-top:0;">
+            如果你还没装好环境，可以先检查版本：
           </p>
-          <p style="margin-top: 14px;"><strong>先检查本机是否已满足</strong></p>
           <div class="code">node -v
 bun -v</div>
-          <p class="list">
-            如果 `node -v` 显示 `v22.x` 或更高，可以直接运行下面的 CrossPilot 一键安装命令。
+          <p class="fineprint">
+            Homebrew 用户可用 <code>brew install node@22 bun</code>；没有 Homebrew 的，可以先装 fnm，再装 Node 22 和 bun。
           </p>
-
-          <p style="margin-top: 18px;"><strong>macOS 已安装 Homebrew</strong></p>
-          <div class="code">brew install node@22 bun
-brew link --overwrite --force node@22
-node -v
-bun -v</div>
-
-          <p style="margin-top: 18px;"><strong>没有 Homebrew</strong></p>
-          <div class="code">curl -fsSL https://fnm.vercel.app/install | bash
-source ~/.zshrc 2&gt;/dev/null || source ~/.bashrc 2&gt;/dev/null || true
-fnm install 22
-fnm use 22
-curl -fsSL https://bun.sh/install | bash
-source ~/.zshrc 2&gt;/dev/null || source ~/.bashrc 2&gt;/dev/null || true
-node -v
-bun -v</div>
-          <p class="list">
-            如果安装后当前终端仍提示 `node` 或 `bun` 找不到，关闭终端重新打开后再执行检查命令。
-          </p>
-
-          <p style="margin-top: 18px;"><strong>一键安装 / 更新</strong></p>
-          <div class="code">curl -fsSL https://raw.githubusercontent.com/crossborder-ai/CrossPilot-releases/main/install.sh | bash</div>
-          <p class="list">
-            同一条命令既用于首次安装，也用于后续更新。脚本会下载最新构建包、使用包内置运行时依赖、注册 `crosspilot` 命令并拉起服务。本地 Node 架构不兼容时才会尝试修复或安装依赖。
-          </p>
-
-          <p style="margin-top: 18px;"><strong>日常启动</strong></p>
-          <div class="code">crosspilot</div>
-          <p class="list">
-            安装后在任意终端运行这一行即可；脚本会自动检查服务是否已运行，必要时启动并打开浏览器。
-          </p>
-
-          <p style="margin-top: 18px;"><strong>关闭</strong></p>
-          <p class="list">
-            关闭浏览器标签页后，服务会在约 30 秒无心跳后自动退出，不需要常驻终端。
-          </p>
-
-          <p style="margin-top: 18px;"><strong>领星配置</strong></p>
-          <ol class="list">
-            <li>先启动 CrossPilot，再打开本地页面。</li>
-            <li>进入设置页里的 LingXing / 领星配置区。</li>
-            <li>按页面提示填写 MCP URL 和 Key，并保存。</li>
-            <li>做一次连接测试，成功后再回到聊天页使用。</li>
-          </ol>
-
-          <p style="margin-top: 18px;"><strong>环境变量</strong></p>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>变量</th>
-                <th>说明</th>
-                <th>默认值</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>CROSSPILOT_INSTALL_DIR</code></td>
-                <td>安装目录</td>
-                <td><code>~/CrossPilot-app</code></td>
-              </tr>
-              <tr>
-                <td><code>CROSSPILOT_DATA_DIR</code></td>
-                <td>数据目录</td>
-                <td><code>~/.crosspilot</code></td>
-              </tr>
-              <tr>
-                <td><code>CROSSPILOT_PORT</code></td>
-                <td>监听端口</td>
-                <td><code>3456</code></td>
-              </tr>
-              <tr>
-                <td><code>CROSSPILOT_MIRROR</code></td>
-                <td>是否强制使用 npmmirror 镜像</td>
-                <td>自动探测</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="grid" id="works">
-        <article class="card">
-          <h2>作品墙</h2>
-          <p>展示代表案例、页面效果和实际结果，用来说明 CrossPilot 能做什么。</p>
-        </article>
-        <article class="card">
-          <h2>能力模块</h2>
-          <p>产品介绍、数据接入、工作流、可观测性、版本分发等能力说明。</p>
-        </article>
-        <article class="card">
-          <h2>结果证明</h2>
-          <p>用上线、修复、提效、询盘等可验证结果，替代空泛表述。</p>
-        </article>
-      </section>
-
-      <section class="section" id="try">
-        <h3>试用入口</h3>
-        <div class="card">
-          <p>
-            先从一个最小可用版本开始：产品介绍页、作品展示、更新公告和联系入口。
-            后续再按反馈补充案例和功能说明。
+          <p class="fineprint">
+            详细的命令、领星配置和环境变量说明，以
+            <a href="https://github.com/crossborder-ai/CrossPilot-releases">CrossPilot-releases</a>
+            仓库 README 为准。
           </p>
         </div>
       </section>
 
-      <section class="section">
-        <h3>更新公告</h3>
-        <div class="card">
-          <p>
-            当前站点处于初始上线阶段。下一步会补充作品卡片、用户场景和更完整的试用说明。
+      <section class="section" id="security">
+        <div class="section-head">
+          <div>
+            <h2>数据与安全</h2>
+            <p>把“本地运行”翻成用户能理解的话：数据不出本机。</p>
+          </div>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <h3>本地保存</h3>
+            <p>账号数据、配置和会话都保存在你自己的电脑上，不经过第三方服务器。</p>
+          </article>
+          <article class="card">
+            <h3>最小权限</h3>
+            <p>只接入你显式配置的领星数据源，不预设多余权限或隐藏同步。</p>
+          </article>
+          <article class="card">
+            <h3>诚实边界</h3>
+            <p>当前只支持领星接入，其他 ERP / 平台会明确标成 Roadmap，不会写成已支持。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="updates">
+        <div class="section-head">
+          <div>
+            <h2>更新与路线图</h2>
+            <p>把“早期”说清楚：现在是内测和共创阶段，不是装成熟。</p>
+          </div>
+        </div>
+        <div class="stack">
+          <article class="card">
+            <h3>当前阶段</h3>
+            <p>种子用户内测中。会持续补真实场景、真实截图和可验证结果。</p>
+          </article>
+          <article class="card">
+            <h3>短期计划</h3>
+            <p>补充案例墙、FAQ、更多使用示例，以及更完整的反馈入口。</p>
+          </article>
+          <article class="card">
+            <h3>中期路线</h3>
+            <p>逐步扩展到利润分析、广告和更多经营数据源，但会先按页面标注再上线。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="contact">
+        <div class="section-head">
+          <div>
+            <h2>联系与反馈</h2>
+            <p>先把入口留出来，后面再补具体联系方式。</p>
+          </div>
+        </div>
+        <div class="panel">
+          <p style="margin-top:0;">
+            这里会放微信、飞书群、邮箱或表单入口。当前先保留一个明确位置，方便后续补真实反馈通道。
+          </p>
+          <p class="fineprint">
+            公开安装包与版本说明在
+            <a href="https://github.com/crossborder-ai/CrossPilot-releases">CrossPilot-releases</a>。
           </p>
         </div>
       </section>
 
-      <div class="note">
-        说明：本页是 CrossPilot 主站，不包含发布包本身。安装、启动、关闭以 release 仓库 README 为准。
-      </div>
+      <section class="section" id="faq">
+        <div class="section-head">
+          <div>
+            <h2>常见问题</h2>
+            <p>早期页面要把疑问提前说掉，减少访客跳出。</p>
+          </div>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>为什么首页不把安装命令放在最前面？</summary>
+            <p>因为第一次来的访客先需要知道它是什么、给谁用、能解决什么问题。安装说明已经保留，但放在“怎么用”里更合理。</p>
+          </details>
+          <details>
+            <summary>它和通用 AI 工具有什么区别？</summary>
+            <p>CrossPilot 已经接好了领星数据，目标是直接处理跨境运营里的库存和补货问题，而不是给一段通用回答。</p>
+          </details>
+          <details>
+            <summary>它会把数据上传到别的服务器吗？</summary>
+            <p>不会。当前设计是本地运行，数据和密钥留在本机。</p>
+          </details>
+        </div>
+      </section>
 
-      <footer>© CrossPilot</footer>
+      <footer>
+        <div>© CrossPilot</div>
+        <div class="footer-links">
+          <a href="https://github.com/crossborder-ai/CrossPilot-releases">GitHub Releases</a>
+          <a href="#how">安装说明</a>
+          <a href="#contact">反馈入口</a>
+        </div>
+      </footer>
     </main>
   </body>
 </html>
