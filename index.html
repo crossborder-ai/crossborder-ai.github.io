@@ -487,9 +487,9 @@
           <article class="card">
             <div class="step-num">1</div>
             <h3>安装</h3>
-            <p>先准备好 Node.js 22+ 和 bun，然后运行安装脚本。</p>
-            <div class="code">curl -fsSL https://raw.githubusercontent.com/crossborder-ai/CrossPilot-releases/main/install.sh | bash</div>
-            <p class="fineprint">脚本会自动处理镜像、下载最新构建包并注册 `crosspilot` 命令。</p>
+            <p>先准备好 Node.js 22+，然后运行安装脚本。</p>
+            <div class="code">curl -fsSL https://download.crosspilot.ai/install.sh | bash</div>
+            <p class="fineprint">脚本会从 CrossPilot 下载域名拉取最新构建包，并注册 <code>crosspilot</code> 命令。</p>
           </article>
           <article class="card">
             <div class="step-num">2</div>
@@ -514,7 +514,7 @@
           <div class="code">node -v
 bun -v</div>
           <p class="fineprint">
-            Homebrew 用户可用 <code>brew install node@22 bun</code>；没有 Homebrew 的，可以先装 fnm，再装 Node 22 和 bun。
+            Homebrew 用户可用 <code>brew install node@22 bun</code>；没有 Homebrew 的，可以先装 fnm，再装 Node 22。bun 主要作为依赖修复 fallback，正常安装优先使用安装包内置依赖。
           </p>
           <p class="fineprint">
             详细的命令、领星配置和环境变量说明，以
