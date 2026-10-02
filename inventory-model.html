@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>进销存蓄水池最小模型流转图</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --water: #0284c7;
+      --water-light: #38bdf8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 24px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+    header { text-align: center; margin-bottom: 24px; max-width: 900px; }
+    h1 { font-size: 26px; margin-bottom: 8px; color: var(--text); }
+    .subtitle { color: var(--text-muted); font-size: 14px; }
+    .demo-note { color: var(--text-muted); font-size: 12px; margin-top: 10px; opacity: .85; }
+    
+    .main-container { width: 100%; max-width: 1040px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+    
+    /* 状态切换栏 */
+    .state-selector { display: flex; gap: 12px; margin-bottom: 24px; justify-content: center; flex-wrap: wrap; }
+    .state-btn { background: #0f172a; border: 1px solid var(--border); color: var(--text); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+    .state-btn:hover { border-color: var(--primary); }
+    .state-btn.active { border-color: var(--primary); background: rgba(56, 189, 248, 0.15); color: var(--primary); }
+    .state-btn[data-state="healthy"].active { border-color: var(--success); background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .state-btn[data-state="stockout"].active { border-color: var(--danger); background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .state-btn[data-state="overstock"].active { border-color: var(--warning); background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+    .state-btn[data-state="bleeding"].active { border-color: #ec4899; background: rgba(236, 72, 153, 0.15); color: #ec4899; }
+    
+    /* SVG 画布容器 */
+    .svg-wrapper { width: 100%; position: relative; border-radius: 12px; background: #090d16; border: 1px solid #1e293b; overflow: hidden; }
+    svg { width: 100%; height: auto; display: block; }
+    
+    /* 诊断解读面板 */
+    .diagnosis-panel { margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .metric-card { background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; }
+    .metric-title { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+    .metric-value { font-size: 20px; font-weight: 700; color: var(--primary); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .metric-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    
+    .action-banner { margin-top: 18px; padding: 14px 20px; border-radius: 10px; border-left: 4px solid var(--primary); background: #0f172a; font-size: 14px; line-height: 1.5; }
+    .action-banner strong { color: var(--primary); }
+
+    /* 动画指示 */
+    @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.9; } }
+    .pulsing { animation: pulse 2s infinite ease-in-out; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>进销存蓄水池最小模型 · 动态流转图</h1>
+    <p class="subtitle">抛开软件与记账规则：以现金投入为起点，经由交期管道流入蓄水池，出水变现造血，抵御池底损耗渗漏</p>
+    <p class="demo-note">说明：图中数字（45／30／20 等）为演示假设，实际按你自己确认的口径重算。</p>
+  </header>
+
+  <div class="main-container">
+    <!-- 状态切换器 -->
+    <div class="state-selector">
+      <button class="state-btn active" data-state="healthy" onclick="switchState('healthy')">🌱 理想造血态 (正常流转)</button>
+      <button class="state-btn" data-state="stockout" onclick="switchState('stockout')">🚨 暴毙态 (断货水位临界)</button>
+      <button class="state-btn" data-state="overstock" onclick="switchState('overstock')">🌊 溺水态 (超龄大积压)</button>
+      <button class="state-btn" data-state="bleeding" onclick="switchState('bleeding')">🩸 虚假繁荣态 (走量但失血)</button>
+    </div>
+
+    <!-- 交互流转图 -->
+    <div class="svg-wrapper">
+      <svg viewBox="0 0 960 480" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#0284c7" stop-opacity="0.95"/>
+          </linearGradient>
+          <linearGradient id="pipeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#334155"/>
+            <stop offset="100%" stop-color="#475569"/>
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- 背景网格装饰 -->
+        <g stroke="#1e293b" stroke-width="0.5" stroke-dasharray="4,4">
+          <line x1="80" y1="40" x2="80" y2="440" />
+          <line x1="480" y1="40" x2="480" y2="440" />
+          <line x1="880" y1="40" x2="880" y2="440" />
+        </g>
+
+        <!-- 1. 资金池 (Cash Pool) -->
+        <g transform="translate(40, 70)">
+          <rect width="140" height="90" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+          <text x="70" y="32" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">💰 现金蓄水池</text>
+          <text x="70" y="55" fill="#f8fafc" font-size="16" font-weight="bold" text-anchor="middle" id="svg-cash-val">流动资金</text>
+          <text x="70" y="74" fill="#94a3b8" font-size="11" text-anchor="middle">支付采购成本 C</text>
+        </g>
+
+        <!-- 资金流向进货管道 -->
+        <path d="M 180 115 L 230 115" fill="none" stroke="#38bdf8" stroke-width="3" stroke-dasharray="6,4"/>
+
+        <!-- 2. 进货决策与交期管道 (Inbound Pipeline) -->
+        <g transform="translate(230, 80)">
+          <!-- 进水阀门 -->
+          <rect x="0" y="10" width="160" height="50" rx="6" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+          <text x="80" y="32" fill="#e2e8f0" font-size="12" font-weight="bold" text-anchor="middle">🚢 在途管道 (Inbound)</text>
+          <text x="80" y="50" fill="#94a3b8" font-size="11" text-anchor="middle" id="svg-lead-text">提前期 L = 30 天</text>
+        </g>
+
+        <!-- 进水注入蓄水池通道 -->
+        <path d="M 390 105 L 440 105 L 440 160" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
+        <polygon points="436,165 444,165 440,175" fill="#38bdf8"/>
+
+        <!-- 3. 核心：库存蓄水池 (Stock S & DOS) -->
+        <g transform="translate(370, 160)">
+          <!-- 池壁 -->
+          <rect x="0" y="0" width="220" height="200" rx="12" fill="#0f172a" stroke="#64748b" stroke-width="3"/>
+          <!-- 刻度尺 -->
+          <line x1="12" y1="30" x2="24" y2="30" stroke="#475569" stroke-width="2"/>
+          <text x="30" y="34" fill="#64748b" font-size="10">安全警戒</text>
+          <line x1="12" y1="80" x2="20" y2="80" stroke="#475569" stroke-width="1.5"/>
+          <line x1="12" y1="130" x2="24" y2="130" stroke="#475569" stroke-width="2"/>
+          <text x="30" y="134" fill="#64748b" font-size="10">断货红线</text>
+
+          <!-- 水体 (可动态调整高度) -->
+          <rect id="svg-water" x="6" y="70" width="208" height="124" rx="8" fill="url(#waterGrad)" opacity="0.85" transition="all 0.5s ease"/>
+
+          <!-- 水位标注 -->
+          <text x="110" y="115" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" id="svg-dos-text">DOS = 45 天</text>
+          <text x="110" y="136" fill="#e0f2fe" font-size="11" text-anchor="middle" id="svg-units-text">库存 S = 900 件</text>
+          
+          <text x="110" y="222" fill="#94a3b8" font-size="12" font-weight="bold" text-anchor="middle">📦 物理蓄水池 (Stock S)</text>
+        </g>
+
+        <!-- 4. 池底渗漏：持有成本损耗 (Carrying Cost Leakage) -->
+        <g transform="translate(440, 365)">
+          <path d="M 40 0 L 40 40" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="4,3"/>
+          <polygon points="36,40 44,40 40,48" fill="#ef4444"/>
+          <rect x="-30" y="50" width="140" height="40" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="1"/>
+          <text x="40" y="67" fill="#ef4444" font-size="11" font-weight="bold" text-anchor="middle">🩸 持有损耗渗漏</text>
+          <text x="40" y="82" fill="#94a3b8" font-size="10" text-anchor="middle" id="svg-leak-val">h = 仓租 + 利息 + 折旧</text>
+        </g>
+
+        <!-- 5. 出水阀门：销售与销速 (Outflow / Sales Velocity) -->
+        <path d="M 590 280 L 670 280" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round"/>
+        <polygon points="670,274 682,280 670,286" fill="#10b981"/>
+
+        <g transform="translate(685, 240)">
+          <rect width="180" height="80" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+          <text x="90" y="28" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">🛒 销售出水阀 (Outflow)</text>
+          <text x="90" y="50" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle" id="svg-velocity-text">日销 V = 20 件/天</text>
+          <text x="90" y="68" fill="#94a3b8" font-size="11" text-anchor="middle" id="svg-price-text">售价 P = ¥100 | 毛利 M</text>
+        </g>
+
+        <!-- 6. 资金回流通道 (Cash Flow Return) -->
+        <path d="M 775 240 L 775 50 L 110 50 L 110 70" fill="none" stroke="#10b981" stroke-width="2.5" stroke-dasharray="6,4"/>
+        <polygon points="106,66 114,66 110,74" fill="#10b981"/>
+        <text x="480" y="42" fill="#10b981" font-size="11" font-weight="bold" text-anchor="middle">💵 销售变现：收回本金 C + 创造净毛利 M 回流资金池</text>
+      </svg>
+    </div>
+
+    <!-- 核心指标面板 -->
+    <div class="diagnosis-panel">
+      <div class="metric-card">
+        <div class="metric-title">动态可售天数 (DOS)</div>
+        <div class="metric-value" id="card-dos">45 天</div>
+        <div class="metric-desc" id="card-dos-desc">S ÷ V (水位充盈)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">供应链提前期 (L)</div>
+        <div class="metric-value" id="card-lead">30 天</div>
+        <div class="metric-desc">工厂生产 + 物流到库</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">时间缓冲度 (DOS - L)</div>
+        <div class="metric-value" id="card-buffer">+15 天</div>
+        <div class="metric-desc" id="card-buffer-desc">具备安全抵抗波动裕度</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">单件净利造血 (M - h*t)</div>
+        <div class="metric-value" id="card-profit">¥32.50</div>
+        <div class="metric-desc" id="card-profit-desc">扣除持有磨损后净赚</div>
+      </div>
+    </div>
+
+    <!-- 决策行动建议 -->
+    <div class="action-banner" id="action-box">
+      <strong>当前经营判定：理想造血态</strong><br>
+      水位（45天）高于交期（30天）且留有安全缓冲，单件造血强劲。<strong>建议动作：保持节拍，以出水速度（20件/天）同速拉动补水，绝不因为工厂返利擅自超额压库。</strong>
+    </div>
+  </div>
+
+  <script>
+    const states = {
+      healthy: {
+        waterY: 70,
+        waterH: 124,
+        waterColor: "url(#waterGrad)",
+        dos: "45 天",
+        units: "库存 S = 900 件",
+        velocity: "日销 V = 20 件/天",
+        price: "单件毛利 = ¥35 | 扣耗净利 ¥32.5",
+        lead: "提前期 L = 30 天",
+        leakVal: "每日渗漏: 正常 (¥2.5/件)",
+        cashVal: "良性造血",
+        cardDos: "45 天",
+        cardBuffer: "+15 天",
+        cardBufferDesc: "具备安全抵抗波动裕度",
+        cardProfit: "+¥32.50",
+        cardProfitDesc: "强劲造血，资金回流顺畅",
+        actionColor: "#10b981",
+        actionHtml: "<strong>当前判定：【造血态】好生意，平稳赚钱</strong><br>池中水位（45天）大于交期（30天），且出水带来的现金流远大于池底渗漏。<strong>建议动作：按日均销速同频补货（拉动式），把多余资金用于开拓新项目。</strong>"
+      },
+      stockout: {
+        waterY: 165,
+        waterH: 29,
+        waterColor: "#ef4444",
+        dos: "8 天 (破警戒线!)",
+        units: "库存 S = 160 件",
+        velocity: "日销 V = 20 件/天",
+        price: "毛利虽高，但无货可卖",
+        lead: "提前期 L = 30 天",
+        leakVal: "渗漏停滞 (水已见底)",
+        cashVal: "面临断水",
+        cardDos: "8 天",
+        cardBuffer: "-22 天 (缺水!)",
+        cardBufferDesc: "交期30天无法覆盖，必断货22天",
+        cardProfit: "即将归零",
+        cardProfitDesc: "断货导致渠道权重降级、损失未来",
+        actionColor: "#ef4444",
+        actionHtml: "<strong>当前判定：【暴毙态】进水脱节，水位见底</strong><br>还剩 8 天水，但新水进仓还要 30 天。<strong>建议动作：立刻启动加急空运进水保住渠道；同时前台适度上调售价，主动压低销速拉长待机时间。</strong>"
+      },
+      overstock: {
+        waterY: 10,
+        waterH: 184,
+        waterColor: "#f59e0b",
+        dos: "180 天 (漫顶堵死)",
+        units: "库存 S = 3,600 件",
+        velocity: "日销 V = 20 件/天",
+        price: "售价 ¥100 | 沉淀资金 36 万",
+        lead: "提前期 L = 30 天",
+        leakVal: "池底严重渗漏 (超龄费飙升)",
+        cashVal: "资金深陷",
+        cardDos: "180 天",
+        cardBuffer: "+150 天 (严重过剩)",
+        cardBufferDesc: "远超必要交期，死钱死水",
+        cardProfit: "-¥18.00 (被耗死)",
+        cardProfitDesc: "仓租与利息已彻底吞噬全部毛利",
+        actionColor: "#f59e0b",
+        actionHtml: "<strong>当前判定：【溺水态】进水过量，每天都在失血</strong><br>库存压了 180 天，每天产生的仓储租金与资金利息已彻底把原本的利润吃光，本质上是在贴钱持有。<strong>建议动作：彻底关死进水管（停止一切采购）；前台立刻打折、提报促销甚至倒贴清仓，立刻放水换回救命现金。</strong>"
+      },
+      bleeding: {
+        waterY: 80,
+        waterH: 114,
+        waterColor: "#ec4899",
+        dos: "35 天 (看似平稳)",
+        units: "库存 S = 1,400 件",
+        velocity: "日销 V = 40 件/天 (热卖)",
+        price: "售价 ¥45 (微薄利润)",
+        lead: "提前期 L = 30 天",
+        leakVal: "高频周转下的隐性侵蚀",
+        cashVal: "账面微利,现金枯竭",
+        cardDos: "35 天",
+        cardBuffer: "+5 天",
+        cardBufferDesc: "流转虽快，但每转一圈亏一圈",
+        cardProfit: "-¥3.20 (实亏)",
+        cardProfitDesc: "扣除实际综合履约与退损后失血",
+        actionColor: "#ec4899",
+        actionHtml: "<strong>当前判定：【虚假繁荣态】走量很快，但越卖越亏</strong><br>每天出单极快、热闹非凡，但扣除退货、平台抽成和资金占用后实际净毛利为负。<strong>建议动作：立即停止盲目追加进货，严肃审计成本与定价模型，要么提价，要么直接砍线止血。</strong>"
+      }
+    };
+
+    function switchState(stateKey) {
+      document.querySelectorAll('.state-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.state === stateKey);
+      });
+
+      const s = states[stateKey];
+      const waterEl = document.getElementById('svg-water');
+      waterEl.setAttribute('y', s.waterY);
+      waterEl.setAttribute('height', s.waterH);
+      waterEl.setAttribute('fill', s.waterColor);
+
+      document.getElementById('svg-dos-text').textContent = s.dos;
+      document.getElementById('svg-units-text').textContent = s.units;
+      document.getElementById('svg-velocity-text').textContent = s.velocity;
+      document.getElementById('svg-price-text').textContent = s.price;
+      document.getElementById('svg-lead-text').textContent = s.lead;
+      document.getElementById('svg-leak-val').textContent = s.leakVal;
+      document.getElementById('svg-cash-val').textContent = s.cashVal;
+
+      document.getElementById('card-dos').textContent = s.cardDos;
+      document.getElementById('card-buffer').textContent = s.cardBuffer;
+      document.getElementById('card-buffer-desc').textContent = s.cardBufferDesc;
+      document.getElementById('card-profit').textContent = s.cardProfit;
+      document.getElementById('card-profit-desc').textContent = s.cardProfitDesc;
+
+      const actionBox = document.getElementById('action-box');
+      actionBox.style.borderLeftColor = s.actionColor;
+      actionBox.innerHTML = s.actionHtml;
+    }
+  </script>
+</body>
+</html>
+
